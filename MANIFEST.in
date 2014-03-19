@@ -1,0 +1,12 @@
+include bash_completion.d/profitbricks-client
+include docs/conf.py
+include docs/index.rst
+include docs/make.bat
+include docs/Makefile
+include docs/man.rst
+include docs/profitbricks_client.rst
+include api-1.2-wsdl.xml
+include appdirs.py
+include LICENSE
+include README.md
+include test_profitbricks_client.py
