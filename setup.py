@@ -34,7 +34,7 @@ setup(
     name='profitbricks-client',
     version=get_version(os.path.join(os.path.dirname(__file__), 'profitbricks_client.py')),
     description='ProfitBricks Client',
-    long_description=open(os.path.join(os.path.dirname(__file__), 'README.md')).read(),
+    long_description=open(os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
     keywords='profitbricks IaaS cloud',
     author='Benjamin Drung',
     author_email='benjamin.drung@profitbricks.com',
