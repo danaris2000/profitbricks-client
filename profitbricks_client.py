@@ -142,12 +142,8 @@ class _Method(object):
             raise TypeError(msg)
 
         call = getattr(self._soap_client.service, self.__name__)
-        # Flatten arguments if the dictionary has just one element. Otherwise suds will fail to
-        # construct the complex argument type out of it.
-        if len(kwargs) == 1:
-            kwargs = kwargs.values()[0]
         try:
-            result = call(kwargs)
+            result = call(**kwargs)
         except AttributeError as error:
             if error.args[0] == "'NoneType' object has no attribute 'read'":
                 raise WrongCredentialsException("Bad user name and password.")

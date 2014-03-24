@@ -49,6 +49,20 @@ ALL_DATACENTERS = u"""<?xml version='1.0' encoding='UTF-8'?>
 </S:Body>
 </S:Envelope>"""
 
+CREATED_DATACENTER = u"""<?xml version='1.0' encoding='UTF-8'?>
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+<S:Body>
+<ns2:CreateDataCenterResponse xmlns:ns2="http://ws.api.profitbricks.com/">
+  <return>
+    <requestId>2360771</requestId>
+    <dataCenterId>4649b926-5989-4911-8d43-6114e2ae1f49</dataCenterId>
+    <dataCenterVersion>1</dataCenterVersion>
+    <region>EUROPE</region>
+  </return>
+</ns2:CreateDataCenterResponse>
+</S:Body>
+</S:Envelope>"""
+
 DATACENTER = u"""<?xml version='1.0' encoding='UTF-8'?>
 <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
 <S:Body>
@@ -161,6 +175,42 @@ class CallTests(unittest.TestCase):  # pylint: disable=R0904
         except xml.parsers.expat.ExpatError:
             pass
         self.assertEqual(first, second)
+
+    @httpretty.activate
+    def test_create_datacenter_1arg(self):
+        """Test calling client.createDataCenter(dataCenterName='Test')"""
+        httpretty.register_uri(httpretty.POST, 'https://api.profitbricks.com/1.2',
+                               body=CREATED_DATACENTER)
+        created_datacenter = self.client.createDataCenter(dataCenterName='Test')
+        request = httpretty.last_request()
+        expected_request = ('<ns0:createDataCenter><dataCenterName>Test</dataCenterName>'
+                            '</ns0:createDataCenter>')
+        self.assert_xml_equal(soap_request(expected_request), request.body)
+
+        expected_datacenter = self.factory.create('createDcResponse')
+        expected_datacenter.requestId = '2360771'
+        expected_datacenter.dataCenterId = '4649b926-5989-4911-8d43-6114e2ae1f49'
+        expected_datacenter.dataCenterVersion = 1
+        expected_datacenter.region = 'EUROPE'
+        self.assert_sudsobject_equal(expected_datacenter, created_datacenter)
+
+    @httpretty.activate
+    def test_create_datacenter_2args(self):
+        """Test calling client.createDataCenter(dataCenterName='Test', region='EUROPE')"""
+        httpretty.register_uri(httpretty.POST, 'https://api.profitbricks.com/1.2',
+                               body=CREATED_DATACENTER)
+        created_datacenter = self.client.createDataCenter(dataCenterName='Test', region='EUROPE')
+        request = httpretty.last_request()
+        expected_request = ('<ns0:createDataCenter><dataCenterName>Test</dataCenterName>'
+                            '<region>EUROPE</region></ns0:createDataCenter>')
+        self.assert_xml_equal(soap_request(expected_request), request.body)
+
+        expected_datacenter = self.factory.create('createDcResponse')
+        expected_datacenter.requestId = '2360771'
+        expected_datacenter.dataCenterId = '4649b926-5989-4911-8d43-6114e2ae1f49'
+        expected_datacenter.dataCenterVersion = 1
+        expected_datacenter.region = 'EUROPE'
+        self.assert_sudsobject_equal(expected_datacenter, created_datacenter)
 
     @httpretty.activate
     def test_get_all_datacenters(self):
