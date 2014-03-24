@@ -39,7 +39,6 @@ setup(
     author='Benjamin Drung',
     author_email='benjamin.drung@profitbricks.com',
     url='https://github.com/profitbricks/profitbricks-client',
-    data_files=[('/etc/bash_completion.d/', ['bash_completion.d/profitbricks-client'])],
     py_modules=['profitbricks_client'],
     scripts=['profitbricks-client'],
     install_requires=['appdirs', 'suds'],
