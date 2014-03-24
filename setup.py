@@ -18,13 +18,21 @@
 """Install profitbricks-client with setuptools."""
 
 import os
+import re
 from setuptools import setup
 
-import profitbricks_client
+
+def get_version(versionfile):
+    """Extract the __version__ from a given Python module."""
+    match = re.search(r'^__version__ = [\'"]([^\'"]*)[\'"]', open(versionfile).read(), re.M)
+    if match:
+        return match.group(1)
+    else:
+        raise RuntimeError("Unable to find version string in {file}.".format(file=versionfile))
 
 setup(
     name='profitbricks-client',
-    version=profitbricks_client.__version__,
+    version=get_version(os.path.join(os.path.dirname(__file__), 'profitbricks_client.py')),
     description='ProfitBricks Client',
     long_description=open(os.path.join(os.path.dirname(__file__), 'README.md')).read(),
     keywords='profitbricks IaaS cloud',
