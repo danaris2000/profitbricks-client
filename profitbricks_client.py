@@ -143,7 +143,10 @@ class _Method(object):
 
         call = getattr(self._soap_client.service, self.__name__)
         try:
-            result = call(**kwargs)
+            if self._has_complex_input_parameter():
+                result = call(kwargs)
+            else:
+                result = call(**kwargs)
         except AttributeError as error:
             if error.args[0] == "'NoneType' object has no attribute 'read'":
                 raise WrongCredentialsException("Bad user name and password.")
@@ -202,6 +205,14 @@ class _Method(object):
     def get_parameter_names(self):
         """Return a list of input parameter names for this call."""
         return [p[0] for p in self._input_parameters]
+
+    def _has_complex_input_parameter(self):
+        """Returns true if the call takes exactly one complex input parameter."""
+        is_complex_type = False
+        if len(self._soap_parameters) == 1:
+            parameter_type = self._soap_parameters[0][1].resolve()
+            is_complex_type = not parameter_type.enum() and len(parameter_type.children()) > 0
+        return is_complex_type
 
     def _input_parameter_str(self):
         """Return a human-readable string representation of the input parameter type."""

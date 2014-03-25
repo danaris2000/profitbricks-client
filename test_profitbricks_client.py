@@ -63,6 +63,21 @@ CREATED_DATACENTER = u"""<?xml version='1.0' encoding='UTF-8'?>
 </S:Body>
 </S:Envelope>"""
 
+CREATED_SERVER = u"""<?xml version='1.0' encoding='UTF-8'?>
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+<S:Body>
+<ns2:CreateServerResponse xmlns:ns2="http://ws.api.profitbricks.com/">
+  <return>
+    <requestId>2360771</requestId>
+    <dataCenterId>7724e95d-c446-4d7f-bede-3d2b0f1d56af</dataCenterId>
+    <dataCenterVersion>1</dataCenterVersion>
+    <serverId>35c34b7e-e212-46af-91a6-4dd50bafbe5c</serverId>
+  </return>
+</ns2:CreateServerResponse>
+</S:Body>
+</S:Envelope>"""
+
+
 DATACENTER = u"""<?xml version='1.0' encoding='UTF-8'?>
 <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
 <S:Body>
@@ -193,6 +208,24 @@ class CallTests(unittest.TestCase):  # pylint: disable=R0904
         expected_datacenter.dataCenterVersion = 1
         expected_datacenter.region = 'EUROPE'
         self.assert_sudsobject_equal(expected_datacenter, created_datacenter)
+
+    @httpretty.activate
+    def test_create_server(self):
+        """Test calling client.createServer(cores=1, ram=256)"""
+        httpretty.register_uri(httpretty.POST, 'https://api.profitbricks.com/1.2',
+                               body=CREATED_SERVER)
+        created_server = self.client.createServer(cores=1, ram=256)
+        request = httpretty.last_request()
+        expected_request = ('<ns0:createServer><request><cores>1</cores><ram>256</ram>'
+                            '</request></ns0:createServer>')
+        self.assert_xml_equal(soap_request(expected_request), request.body)
+
+        expected_response = self.factory.create('createServerResponse')
+        expected_response.requestId = "2360771"
+        expected_response.dataCenterId = "7724e95d-c446-4d7f-bede-3d2b0f1d56af"
+        expected_response.dataCenterVersion = 1
+        expected_response.serverId = "35c34b7e-e212-46af-91a6-4dd50bafbe5c"
+        self.assert_sudsobject_equal(expected_response, created_server)
 
     @httpretty.activate
     def test_create_datacenter_2args(self):
