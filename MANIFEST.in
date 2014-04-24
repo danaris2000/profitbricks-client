@@ -6,7 +6,6 @@ include docs/Makefile
 include docs/man.rst
 include docs/profitbricks_client.rst
 include api-1.2-wsdl.xml
-include appdirs.py
 include LICENSE
 include README.md
 include test_profitbricks_client.py

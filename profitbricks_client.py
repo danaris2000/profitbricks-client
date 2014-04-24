@@ -58,13 +58,12 @@ except ImportError:
 try:
     import appdirs
 except ImportError:
-    print("This utility requires the appdirs Python module, which isn't currently installed.",
-          file=sys.stderr)
+    print("This utility requires the appdirs (>= 1.3.0) Python module, which isn't currently "
+          "installed.", file=sys.stderr)
     sys.exit(1)
 if not hasattr(appdirs, "user_config_dir"):
-    print("This utility requires a newer version of appdirs. Use a recent git snapshot of appdirs "
-          "or version >= 1.3.0. A working copy of appdirs is shipped in the source of "
-          "profitbricks-client for your convenience.", file=sys.stderr)
+    print("This utility requires the appdirs Python module in version 1.3.0 or later, "
+          "but only version " + appdirs.__version__ + " is installed.", file=sys.stderr)
     sys.exit(1)
 
 try:
