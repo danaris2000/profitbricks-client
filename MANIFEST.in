@@ -5,6 +5,7 @@ include docs/make.bat
 include docs/Makefile
 include docs/man.rst
 include docs/profitbricks_client.rst
+include example/server2ip.py
 include api-1.2-wsdl.xml
 include LICENSE
 include README.md
