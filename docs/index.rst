@@ -24,6 +24,18 @@ interactively use it with tools like ipython_.
 
 .. _ipython: http://ipython.org/
 
+Installation
+------------
+
+Installing ProfitBricks client is simple with pip_, just run this in your terminal:
+
+.. code-block:: bash
+
+   pip install git+git://github.com/profitbricks/profitbricks-client
+
+.. _pip: http://pip.readthedocs.org/en/latest/
+
+
 Quick start
 -----------
 
