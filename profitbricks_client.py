@@ -115,6 +115,11 @@ class ClientTooOldException(Exception):
     pass
 
 
+class SupportMatrixMalformedException(Exception):
+    """Raised when the downloaded support matrix file is malformed and failed to be parsed."""
+    pass
+
+
 class _Method(object):
     """Callable object representing one ProfitBricks API call."""
 
@@ -787,10 +792,17 @@ def _get_support_matrix(running_client_version):
     running_client_version_number = [int(x) for x in running_client_version.split(".")[:2]]
     parser = ConfigParser()
     support_matrix = urlopen(_SUPPORT_MATRIX_URL)
-    if hasattr(parser, "read_file"):
-        parser.read_file(support_matrix)  # pylint: disable=E1103
-    else:
-        parser.readfp(support_matrix)
+    try:
+        if hasattr(parser, "read_file"):
+            parser.read_file(support_matrix)  # pylint: disable=E1103
+        else:
+            parser.readfp(support_matrix)
+    except configparser.MissingSectionHeaderError:
+        raise SupportMatrixMalformedException(
+            "Failed to parse {url}. This file is malformed. Please contact support. "
+            "You can work around this issue by specifying an endpoint with "
+            "--endpoint.".format(url=_SUPPORT_MATRIX_URL)
+        )
 
     # Construct dictionaries with older/newer/supported API version mapping to endpoints
     older = dict()
@@ -1004,7 +1016,8 @@ def main():  # pylint: disable=R0911,R0912
             print(_SCRIPT_NAME + ": Error: Could not connect to server: " + str(error.reason),
                   file=sys.stderr)
             return 1
-        except (ClientTooNewException, ClientTooOldException, UnknownAPIVersionException) as error:
+        except (ClientTooNewException, ClientTooOldException, SupportMatrixMalformedException,
+                UnknownAPIVersionException) as error:
             print(_SCRIPT_NAME + ": Error: " + str(error), file=sys.stderr)
             return 1
 
