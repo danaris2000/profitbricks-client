@@ -750,7 +750,7 @@ def get_password(username, config=None):
 
 
 def get_profitbricks_client(username=None, password=None, api_version=None, endpoint=None,
-                            config=None, store_endpoint=True, timeout=90):
+                            config=None, store_endpoint=True, timeout=180):
     # pylint: disable=R0913
     """Connect to the API and return a ProfitBricks client object.
 
