@@ -85,6 +85,7 @@ _COMPANY = "ProfitBricks"
 _INDENTATION = "    "
 _SCRIPT_NAME = "profitbricks-client"
 _SUPPORT_MATRIX_URL = "https://api.profitbricks.com/support_matrix.ini"
+_DEFAULT_TIMEOUT = 180
 _UNSET = object()
 # Use semantic versioning for the client (different than the API version!). See http://semver.org/
 __version__ = "1.0.0"
@@ -699,6 +700,8 @@ def _get_parser():
                        help="Point the CLI at a URL of the user's choice.")
     group.add_argument("--clear-cache", action="store_true",
                        help="Updates to the latest version of the ProfitBricks WSDL.")
+    group.add_argument("--timeout", type=int, default=_DEFAULT_TIMEOUT,
+                       help="connection timeout in seconds (default %(default)s).")
 
     group = parser.add_argument_group("Input/Output Arguments")
     group.add_argument("-v", "--verbose", action="count", default=0,
@@ -750,7 +753,7 @@ def get_password(username, config=None):
 
 
 def get_profitbricks_client(username=None, password=None, api_version=None, endpoint=None,
-                            config=None, store_endpoint=True, timeout=180):
+                            config=None, store_endpoint=True, timeout=_DEFAULT_TIMEOUT):
     # pylint: disable=R0913
     """Connect to the API and return a ProfitBricks client object.
 
@@ -1011,7 +1014,7 @@ def main():  # pylint: disable=R0911,R0912
             args.password = args.password_file.read().strip()
         try:
             client = get_profitbricks_client(args.username, args.password, args.api_version,
-                                             args.endpoint, config)
+                                             args.endpoint, config, True, args.timeout)
         except URLError as error:
             print(_SCRIPT_NAME + ": Error: Could not connect to server: " + str(error.reason),
                   file=sys.stderr)

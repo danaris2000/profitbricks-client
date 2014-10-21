@@ -50,6 +50,8 @@ call
     Point the CLI at a URL of the user's choice.
 --clear-cache
     Updates to the latest version of the ProfitBricks WSDL.
+--timeout TIMEOUT
+    connection timeout in seconds (default 180).
 -v, --verbose
     Print data on the outgoing call to stderr. By default, print only response data (on stdout).
 --xml
