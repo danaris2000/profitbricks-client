@@ -22,6 +22,7 @@
 
 from __future__ import print_function
 
+import datetime
 import getpass
 import logging
 import os
@@ -44,9 +45,10 @@ except ImportError:
 
 try:
     from urllib.error import URLError  # pylint: disable=E0611
-    from urllib.request import urlopen  # pylint: disable=E0611
+    from urllib.request import urlretrieve  # pylint: disable=E0611
 except ImportError:
-    from urllib2 import URLError, urlopen
+    from urllib2 import URLError
+    from urllib import urlretrieve
 
 try:
     import argparse
@@ -86,6 +88,7 @@ _INDENTATION = "    "
 _SCRIPT_NAME = "profitbricks-client"
 _SUPPORT_MATRIX_URL = "https://api.profitbricks.com/support_matrix.ini"
 _DEFAULT_TIMEOUT = 180
+_CACHE_DURATION = datetime.timedelta(days=1)
 _UNSET = object()
 # Use semantic versioning for the client (different than the API version!). See http://semver.org/
 __version__ = "1.0.0"
@@ -794,12 +797,20 @@ def _get_support_matrix(running_client_version):
     # Get (major, minor) from client version
     running_client_version_number = [int(x) for x in running_client_version.split(".")[:2]]
     parser = ConfigParser()
-    support_matrix = urlopen(_SUPPORT_MATRIX_URL)
+    cachedir = appdirs.user_cache_dir(_SCRIPT_NAME, _COMPANY)
+    support_matrix_file = os.path.join(cachedir, os.path.basename(_SUPPORT_MATRIX_URL))
+    # Cache support_matrix.ini file for _CACHE_DURATION time span
+    if not os.path.isfile(support_matrix_file) or datetime.datetime.now() - _CACHE_DURATION > \
+            datetime.datetime.fromtimestamp(os.stat(support_matrix_file).st_mtime):
+        if not os.path.isdir(cachedir):
+            os.makedirs(cachedir)
+        urlretrieve(_SUPPORT_MATRIX_URL, support_matrix_file)
+
     try:
         if hasattr(parser, "read_file"):
-            parser.read_file(support_matrix)  # pylint: disable=E1103
+            parser.read_file(open(support_matrix_file))  # pylint: disable=E1103
         else:
-            parser.readfp(support_matrix)
+            parser.readfp(open(support_matrix_file))
     except configparser.MissingSectionHeaderError:
         raise SupportMatrixMalformedException(
             "Failed to parse {url}. This file is malformed. Please contact support. "
