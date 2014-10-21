@@ -19,7 +19,13 @@
 
 import os
 import re
+import sys
 from setuptools import setup
+
+if sys.version_info[0] >= 3:
+    SUDS = 'suds-jurko'
+else:
+    SUDS = 'suds'
 
 
 def get_version(versionfile):
@@ -41,7 +47,7 @@ setup(
     url='https://github.com/profitbricks/profitbricks-client',
     py_modules=['profitbricks_client'],
     scripts=['profitbricks-client'],
-    install_requires=['appdirs', 'suds'],
+    install_requires=['appdirs', SUDS],
     license='ISC',
     test_suite="test_profitbricks_client",
     tests_require=['httpretty', 'mock'],
