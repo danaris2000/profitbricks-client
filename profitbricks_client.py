@@ -72,7 +72,7 @@ except ImportError:
     print("This utility requires the suds (>= 0.4) Python module, which isn't currently "
           "installed.", file=sys.stderr)
     sys.exit(1)
-if [int(X) for X in suds.__version__.split(".")] < [0, 4]:
+if [int(X) for X in suds.__version__.split(".")[:2]] < [0, 4]:
     print("This utility requires the suds Python module in version 0.4 or later, "
           "but only version " + suds.__version__ + " is installed.", file=sys.stderr)
     sys.exit(1)
