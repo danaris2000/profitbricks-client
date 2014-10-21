@@ -67,7 +67,7 @@ if not hasattr(appdirs, "user_config_dir"):
     sys.exit(1)
 
 try:
-    import suds
+    import suds.client
 except ImportError:
     print("This utility requires the suds (>= 0.4) Python module, which isn't currently "
           "installed.", file=sys.stderr)
